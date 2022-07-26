@@ -17,4 +17,17 @@ Write an SQL query to calculate the total time in minutes spent by each employee
 
 Return the result table in any order.
 
- 
+# We are looking for: employee_id, event_date, and the total time each employee was at the event 
+# To find total time, we use aggregate function sum(time out - time in) 
+# we can either use normal or window function to write this query 
+Option 1: 
+select distinct emp_id, event_day, sum(out_time - in_time) as total_time 
+from employees 
+group by emp_id, event_day 
+
+option 2: using window function 
+select distinct emp_id, event_day, sum(out_time - in_time) over (partition by emp__id, event_day order by emp_id) as total_time 
+from employees
+
+# partition by is acting as group by to categorize id and event_day 
+# also using distinct emp_id so we don't get duplicate results 
