@@ -1,0 +1,48 @@
+Table: Users
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| user_id        | int     |
+| name           | varchar |
++----------------+---------+
+user_id is the primary key for this table.
+This table contains the ID and the name of the user. The name consists of only lowercase and uppercase characters.
+ 
+
+Write an SQL query to fix the names so that only the first character is uppercase and the rest are lowercase.
+
+Return the result table ordered by user_id.
+
+The query result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Users table:
++---------+-------+
+| user_id | name  |
++---------+-------+
+| 1       | aLice |
+| 2       | bOB   |
++---------+-------+
+Output: 
++---------+-------+
+| user_id | name  |
++---------+-------+
+| 1       | Alice |
+| 2       | Bob   |
++---------+-------+
+
+
+# the question is asking to fix names with 3 conditions:
+# 1. first character = upper case. to select the first character, we use left(string, index) 
+# 2. remaining = lower case. to select the remaining without knowing how many character to the end, we use substring
+# 3. order by user_id 
+# finally, use concat() to link first and remaining parts
+
+select user_id, concat(upper(left(name, 1)), lower(substring(name, 2, len(name)))) as "name" 
+from Users
+order by user_id 
