@@ -91,7 +91,19 @@ Output:
 
 # Q: Query for the user id, join date and the number of orders each users purchased
 # condition: sale must be in 2019
-
-select u.user_id as buyer_id, u.join_date, if(o.order_date is NULL, 0, count(o.order_date)) as orders_in_2019
+# Option 1: 
+select u.user_id as buyer_id, u.join_date, if(o.order_date is null, 0, count(o.order_date)) as orders_in_2019
 from Orders as o right join Users as u on o.buyer_id = u.user_id and o.order_date like '2019%'
 group by u.user_id
+
+# Option 2: using cte table. Using ifnull as there are cases where order_id = null
+with cte as(
+select buyer_id, ifnull(count(order_id),0) as "orders_in_2019"
+from orders 
+where year(order_date) = '2019'
+group by buyer_id 
+)
+select u.user_id as "buyer_id", u.join_date, ifnull(o.orders_in_2019,0) as orders_in_2019
+from users u 
+left join cte as o on u.user_id = o.buyer_id 
+group by u.user_id 
