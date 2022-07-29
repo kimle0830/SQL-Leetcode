@@ -64,8 +64,9 @@ addressId = 1 contains information about the address of personId = 2.
 
 # question: query firstName, lastName, city and state 
 # using left join because Person table has the full list of all while Address table might only include people with full/partial details
+# also need to address the condition where state is null, we want it to return NULL
 
-select p.firstName, p.lastName, a.city, a.state
+select p.firstName, p.lastName, a.city, ifnull(a.state, null) as "state"
 from person p
 left join address a on p.personId = a.personId 
 
