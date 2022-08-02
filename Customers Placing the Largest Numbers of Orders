@@ -48,7 +48,25 @@ Follow up: What if more than one customer has the largest number of orders, can 
 # condition: the customer must have the highest number of order 
 # we use subquery in this case to set aggregate function to meet the required condition
 
+# Option 1: using subquery 
 select customer_number
 from orders 
 group by customer_number
 having count(order_number) = (select count(order_number) from orders order by count(order_number) desc limit 1)
+
+
+# Option 2: using window function 
+# To find the customer who has the largest number of orders, we can use dense_rank() and avoid writing subquery as above
+
+                     
+with cte as (
+select distinct customer_number, 
+        order_number, 
+        count(order_number) as "count_order", 
+        dense_rank() over (order by count(order_number) desc) as "rank_order"
+from orders 
+group by customer_number
+)
+select customer_number 
+from cte 
+where rank_order = 1
