@@ -61,7 +61,7 @@ having count(order_number) = (select count(order_number) from orders order by co
                      
 with cte as (
 select distinct customer_number, 
-        order_number, 
+        order_number, -- optional 
         count(order_number) as "count_order", 
         dense_rank() over (order by count(order_number) desc) as "rank_order"
 from orders 
@@ -70,3 +70,4 @@ group by customer_number
 select customer_number 
 from cte 
 where rank_order = 1
+
