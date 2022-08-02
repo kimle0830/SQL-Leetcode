@@ -25,9 +25,39 @@ select distinct emp_id, event_day, sum(out_time - in_time) as total_time
 from employees 
 group by emp_id, event_day 
 
-option 2: using window function 
+Option 2: using window function 
 select distinct emp_id, event_day, sum(out_time - in_time) over (partition by emp__id, event_day order by emp_id) as total_time 
 from employees
 
 # partition by is acting as group by to categorize id and event_day 
 # also using distinct emp_id so we don't get duplicate results 
+
+Option 3: Using cte and window function - faster run time
+
+with cte as (
+select emp_id, 
+        event_day as "day", 
+        sum(out_time - in_time) over (partition by emp_id, event_day order by event_day) as "total_time"
+from employees 
+)
+select distinct emp_id, 
+        day, 
+        total_time
+from cte
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
