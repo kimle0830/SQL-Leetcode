@@ -53,3 +53,18 @@ group by player_id
 # Option 2: using window function 
 select player_id, min(event_date) over (partition by player_id) as "first_login"
 from activity
+
+# Option 3: using cte and window function
+
+with cte as (
+select player_id, 
+        event_date, 
+        dense_rank() over (partition by player_id order by event_date) as r
+from activity
+# group by player_id
+)
+select player_id, 
+    event_date as "first_login"
+from cte
+where r = 1
+
