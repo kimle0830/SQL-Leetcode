@@ -76,3 +76,22 @@ select s.stock_name, (b.buy - s.sell) as "capital_gain_loss"
 from cte as s
 left join cte1 as b on s.stock_name = b.stock_name 
 group by s.stock_name
+
+or 
+-- faster runtime because we know for every buy, there is a sell. so values in both tables must match
+with cte as (
+select stock_name, 
+        sum(price) over (partition by stock_name) as "sell"
+from stocks 
+where lower(operation) = 'sell'
+), 
+cte1 as (
+select stock_name, 
+        sum(price) over (partition by stock_name) as "buy"
+from stocks
+where lower(operation) = 'buy'
+)
+select s.stock_name, s.sell - b.buy as "capital_gain_loss"
+from cte s join cte1 b on s.stock_name = b.stock_name 
+group by s.stock_name
+
