@@ -1,0 +1,87 @@
+Table: Employee
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| id           | int     |
+| name         | varchar |
+| salary       | int     |
+| departmentId | int     |
++--------------+---------+
+id is the primary key column for this table.
+departmentId is a foreign key of the ID from the Department table.
+Each row of this table indicates the ID, name, and salary of an employee. It also contains the ID of their department.
+ 
+
+Table: Department
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| name        | varchar |
++-------------+---------+
+id is the primary key column for this table.
+Each row of this table indicates the ID of a department and its name.
+ 
+
+Write an SQL query to find employees who have the highest salary in each of the departments.
+
+Return the result table in any order.
+
+The query result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Employee table:
++----+-------+--------+--------------+
+| id | name  | salary | departmentId |
++----+-------+--------+--------------+
+| 1  | Joe   | 70000  | 1            |
+| 2  | Jim   | 90000  | 1            |
+| 3  | Henry | 80000  | 2            |
+| 4  | Sam   | 60000  | 2            |
+| 5  | Max   | 90000  | 1            |
++----+-------+--------+--------------+
+Department table:
++----+-------+
+| id | name  |
++----+-------+
+| 1  | IT    |
+| 2  | Sales |
++----+-------+
+Output: 
++------------+----------+--------+
+| Department | Employee | Salary |
++------------+----------+--------+
+| IT         | Jim      | 90000  |
+| Sales      | Henry    | 80000  |
+| IT         | Max      | 90000  |
++------------+----------+--------+
+Explanation: Max and Jim both have the highest salary in the IT department and Henry has the highest salary in the Sales department.
+
+Q: return employee name, department, and salary 
+C: must return the hgihest salary for the distinct department 
+
+-- We want to only return employee with the highest salary, however, there might be more than 1 person in each department with the sanme amount of salary 
+-- Use dense_rank because it categorizes by department 
+-- Department A: salary 10k 10k 20k 20k 
+-- it will return both employees with salary = 20k and both of them have rank = 1
+-- then dense_rank will group the second dept and find highest salary for employees in that dept
+
+with cte as (
+select e.name as Employee, 
+        e.salary as Salary, 
+        d.name as Department, 
+        dense_rank() over (partition by d.name order by e.salary desc) as salary_rank
+from employee e
+left join department d on e.departmentid = d.id
+)
+select Department,
+       Employee, 
+       Salary
+from cte 
+where salary_rank = 1
