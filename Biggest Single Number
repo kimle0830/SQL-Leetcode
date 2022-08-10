@@ -1,0 +1,31 @@
+Table: MyNumbers
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| num         | int  |
++-------------+------+
+There is no primary key for this table. It may contain duplicates.
+Each row of this table contains an integer.
+ 
+
+A single number is a number that appeared only once in the MyNumbers table.
+
+Write an SQL query to report the largest single number. If there is no single number, report null.
+
+The query result format is in the following example.
+
+Q: query to get the largest number
+C: must be a single nummber (appears only once). If none, then null 
+
+-- In order to get to the largest single number, we want to get those numbers that only appear once. then select the max number among those
+
+with cte as (
+select num
+from mynumbers
+group by num
+having count(num) = 1
+)
+select ifnull(max(num),null) as num
+from cte 
+
