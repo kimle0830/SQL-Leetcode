@@ -68,7 +68,7 @@ The winner is candidate B.
 Q: query to get names of the winning candidates 
 C: win = largest number of votes 
 
--- in order to determine person with largest number of votes, we can either use Max() or rank by counting votes
+-- in order to determine person with largest number of votes, we can either use dense_rank or row_number to rank by counting votes
 
 with cte as(
 select c.name, 
