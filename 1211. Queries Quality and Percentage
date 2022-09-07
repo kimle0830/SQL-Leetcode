@@ -60,5 +60,20 @@ Dog queries poor_ query_percentage is (1 / 3) * 100 = 33.33
 Cat queries quality equals ((2 / 5) + (3 / 3) + (4 / 7)) / 3 = 0.66
 Cat queries poor_ query_percentage is (1 / 3) * 100 = 33.33
 
-```
-````
+Q: report the name, quality, and poor_percentage
+C: round to 2 decimals
+-- write a CTE table filter by those with rating < 3
+
+with cte as (
+select query_name, 
+       count(rating) as rating_count
+from queries
+where rating < 3
+group by query_name
+)
+select q.query_name,
+       round((sum((q.rating/q.position)) / count(q.query_name)),2) as quality,
+       ifnull(round(((c.rating_count / count(q.query_name))*100),2),0.00) as poor_query_percentage
+from queries as q
+left join cte c on q.query_name = c.query_name
+group by q.query_name
